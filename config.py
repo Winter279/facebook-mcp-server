@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env from the same directory as this file (works regardless of cwd)
+load_dotenv(Path(__file__).parent / ".env")
 
 # Facebook Graph API setup
 GRAPH_API_VERSION = "v22.0"

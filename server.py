@@ -274,3 +274,14 @@ def bulk_hide_comments(comment_ids: list[str]) -> list[dict[str, Any]]:
     """Hide multiple comments by ID."""
     return manager.bulk_hide_comments(comment_ids)
 
+
+if __name__ == "__main__":
+    import sys
+    transport = sys.argv[1] if len(sys.argv) > 1 else "stdio"
+    if transport == "sse":
+        import uvicorn
+        app = mcp.sse_app()
+        uvicorn.run(app, host="0.0.0.0", port=8100)
+    else:
+        mcp.run(transport="stdio")
+
