@@ -10,4 +10,5 @@ COPY . .
 ENV PORT=3000
 EXPOSE 3000
 
-CMD ["python", "server.py", "sse"]
+# Use streamable-http for maximum stability (SSE still available as fallback)
+CMD ["python", "server.py", "streamable-http"]
