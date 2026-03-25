@@ -5,9 +5,9 @@ from config import GRAPH_API_BASE_URL, PAGE_ID, PAGE_ACCESS_TOKEN
 
 logger = logging.getLogger("facebook-mcp.api")
 
-# Timeout: 10s connect, 60s read (Facebook insights can be slow)
-DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
-MAX_RETRIES = 2
+# Timeout: 5s connect, 20s read — must complete before tose.sh proxy 30s timeout
+DEFAULT_TIMEOUT = httpx.Timeout(connect=5.0, read=20.0, write=5.0, pool=5.0)
+MAX_RETRIES = 1  # 1 retry = 2 attempts max, must fit within 30s proxy window
 
 
 class FacebookAPI:
@@ -32,13 +32,17 @@ class FacebookAPI:
     async def _request(
         self, method: str, endpoint: str, params: dict[str, Any], json: dict[str, Any] | None = None
     ) -> dict[str, Any]:
+        import time
         url = f"{GRAPH_API_BASE_URL}/{endpoint}"
         params["access_token"] = PAGE_ACCESS_TOKEN
+        t0 = time.monotonic()
+        logger.info(">>> %s %s starting", method, endpoint)
 
         last_exc: Exception | None = None
         for attempt in range(MAX_RETRIES + 1):
             try:
                 resp = await self._client.request(method, url, params=params, json=json)
+                logger.info("<<< %s %s done in %.1fs (status=%s)", method, endpoint, time.monotonic() - t0, resp.status_code)
                 data = resp.json()
 
                 # Retryable Facebook server errors
