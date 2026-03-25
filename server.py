@@ -1,9 +1,12 @@
 import os
 from mcp.server.fastmcp import FastMCP
+from mcp.server.sse import TransportSecuritySettings
 from manager import Manager
 from typing import Any
 
-mcp = FastMCP("FacebookMCP")
+mcp = FastMCP("FacebookMCP", transport_security=TransportSecuritySettings(
+    enable_dns_rebinding_protection=False
+))
 manager = Manager()
 
 @mcp.tool()
