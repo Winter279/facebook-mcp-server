@@ -1,3 +1,4 @@
+import os
 from mcp.server.fastmcp import FastMCP
 from manager import Manager
 from typing import Any
@@ -281,7 +282,8 @@ if __name__ == "__main__":
     if transport == "sse":
         import uvicorn
         app = mcp.sse_app()
-        uvicorn.run(app, host="0.0.0.0", port=8100)
+        port = int(os.environ.get("PORT", 8100))
+        uvicorn.run(app, host="0.0.0.0", port=port)
     else:
         mcp.run(transport="stdio")
 
