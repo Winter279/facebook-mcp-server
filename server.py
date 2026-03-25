@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.sse import TransportSecuritySettings
 from manager import Manager
 
 # ---------------------------------------------------------------------------
@@ -20,7 +21,9 @@ logger = logging.getLogger("facebook-mcp")
 # ---------------------------------------------------------------------------
 # MCP + Manager
 # ---------------------------------------------------------------------------
-mcp = FastMCP("FacebookMCP")
+mcp = FastMCP("FacebookMCP", transport_security=TransportSecuritySettings(
+    enable_dns_rebinding_protection=False
+))
 manager = Manager()
 
 
